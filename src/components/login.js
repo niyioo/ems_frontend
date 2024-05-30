@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux'; // Import useDispatch
+import { useDispatch } from 'react-redux';
 import { loginUser } from '../actions/userActions';
-
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const dispatch = useDispatch(); // Initialize useDispatch
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize useNavigate
   const [credentials, setCredentials] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(loginUser(credentials)); // Dispatch the loginUser action with credentials
+    await dispatch(loginUser(credentials)); // Dispatch the loginUser action with credentials
+    navigate('/dashboard'); // Navigate to the dashboard after successful login
   };
 
   return (

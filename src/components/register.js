@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux'; // Import useDispatch
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../actions/userActions';
 
-
 const Register = () => {
-  const dispatch = useDispatch(); // Initialize useDispatch
+  const dispatch = useDispatch();
+  const history = useNavigate(); // Initialize useHistory
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
   });
+  const [errors, setErrors] = useState({}); // State for form errors
 
   const { name, email, password } = formData;
 
@@ -19,12 +21,27 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(registerUser(formData)); // Dispatch the registerUser action
+    // Perform form validation here (e.g., check for empty fields)
+    if (!name || !email || !password) {
+      setErrors({ message: 'Please fill in all fields' });
+      return;
+    }
+
+    dispatch(registerUser(formData))
+      .then(() => {
+        // Redirect to dashboard or any other page upon successful registration
+        history.push('/dashboard');
+      })
+      .catch((error) => {
+        // Handle registration errors
+        setErrors({ message: error.message });
+      });
   };
 
   return (
     <div>
       <h2>Register</h2>
+      {errors && <div className="error">{errors.message}</div>}
       <form onSubmit={handleSubmit}>
         <input type="text" name="name" value={name} onChange={handleChange} placeholder="Name" required />
         <input type="email" name="email" value={email} onChange={handleChange} placeholder="Email" required />
